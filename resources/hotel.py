@@ -91,6 +91,7 @@ class Hotel(Resource):
 
         dados = Hotel.args.parse_args()
         hotelModel = HotelModel(hotel_id, **dados)
+
         try:
             hotelModel.save_hotel()
             return hotelModel.json(), 201
