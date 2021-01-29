@@ -140,12 +140,9 @@ dmypy.json
 
 #ignore files
 /.vscode
-<<<<<<< HEAD
-/ambvir
-=======
 /ambvir
 /.env
 /env
 
-.DS_Store
->>>>>>> feature/filter-hoteis
+/.DS_Store
+
