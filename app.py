@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import os
->>>>>>> feature/filter-hoteis
 from flask import Flask, jsonify
 from flask_restful import Api
 
@@ -10,18 +7,11 @@ from resources.hotel import Hoteis, Hotel
 from resources.usuario import User, UserRegister, UserLogin, UserAll, UserLogout
 from flask_jwt_extended import JWTManager
 
-<<<<<<< HEAD
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACY_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = '58280d9e-60b3-11eb-ae93-0242ac130002'
-=======
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACY_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
->>>>>>> feature/filter-hoteis
 app.config['JWT_BLACKLIST_ENABLED'] = True
 
 api = Api(app)
