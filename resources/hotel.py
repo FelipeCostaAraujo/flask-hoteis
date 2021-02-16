@@ -1,29 +1,8 @@
 from models.hotel import HotelModel
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
+from resources.filters import *
 import sqlite3
-
-
-def normalize_path_params(cidade=None, estrelas_min=0, estrelas_max=5, diaria_min=0, diaria_max=10000, limit=50, offset=0, **data):
-    if cidade:
-        return {
-            'cidade': cidade,
-            'estrelas_min': estrelas_min,
-            'estrelas_max': estrelas_max,
-            'diaria_min': diaria_min,
-            'diaria_max': diaria_max,
-            'limit': limit,
-            'offset': offset
-        }
-    return {
-        'estrelas_min': estrelas_min,
-        'estrelas_max': estrelas_max,
-        'diaria_min': diaria_min,
-        'diaria_max': diaria_max,
-        'limit': limit,
-        'offset': offset
-    }
-
 
 path_params = reqparse.RequestParser()
 path_params.add_argument('cidade', type=str)
@@ -44,19 +23,11 @@ class Hoteis(Resource):
         params = normalize_path_params(**valid_data)
 
         if not params.get('cidade'):
-            query = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ?) \
-            LIMIT ? OFFSET ?"
             tupla = tuple([params[key] for key in params])
-            result = cursor.execute(query, tupla)
+            result = cursor.execute(query_without_city, tupla)
         else:
-            query = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ?) \
-            and cidade = ? LIMIT ? OFFSET ?"
             tupla = tuple([params[key] for key in params])
-            result = cursor.execute(query, tupla)
+            result = cursor.execute(query_with_city, tupla)
 
         hoteis = []
 
