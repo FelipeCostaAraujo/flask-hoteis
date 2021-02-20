@@ -4,6 +4,7 @@ from flask_restful import Api
 
 from blacklist import BLACKLIST
 from resources.hotel import Hoteis, Hotel
+from resources.site import Site,Sites
 from resources.usuario import User, UserRegister, UserLogin, UserAll, UserLogout
 from flask_jwt_extended import JWTManager
 
@@ -42,10 +43,14 @@ def create_db():
 
 api.add_resource(Hoteis, '/hoteis')
 api.add_resource(Hotel, '/hoteis/<string:hotel_id>')
+
+api.add_resource(Sites, '/sites')
+api.add_resource(Site, '/sites/<string:url>')
+
 api.add_resource(User, '/usuarios/<int:user_id>')
+api.add_resource(UserAll, '/usuarios/all')
 api.add_resource(UserRegister, '/cadastro')
 api.add_resource(UserLogin, '/login')
-api.add_resource(UserAll, '/usuarios/all')
 api.add_resource(UserLogout, '/logout')
 
 if __name__ == '__main__':

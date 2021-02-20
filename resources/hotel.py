@@ -1,29 +1,10 @@
 from models.hotel import HotelModel
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required
+
+from models.site import SiteModel
+from resources.filters import *
 import sqlite3
-
-
-def normalize_path_params(cidade=None, estrelas_min=0, estrelas_max=5, diaria_min=0, diaria_max=10000, limit=50, offset=0, **data):
-    if cidade:
-        return {
-            'cidade': cidade,
-            'estrelas_min': estrelas_min,
-            'estrelas_max': estrelas_max,
-            'diaria_min': diaria_min,
-            'diaria_max': diaria_max,
-            'limit': limit,
-            'offset': offset
-        }
-    return {
-        'estrelas_min': estrelas_min,
-        'estrelas_max': estrelas_max,
-        'diaria_min': diaria_min,
-        'diaria_max': diaria_max,
-        'limit': limit,
-        'offset': offset
-    }
-
 
 path_params = reqparse.RequestParser()
 path_params.add_argument('cidade', type=str)
@@ -44,19 +25,11 @@ class Hoteis(Resource):
         params = normalize_path_params(**valid_data)
 
         if not params.get('cidade'):
-            query = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ?) \
-            LIMIT ? OFFSET ?"
             tupla = tuple([params[key] for key in params])
-            result = cursor.execute(query, tupla)
+            result = cursor.execute(query_without_city, tupla)
         else:
-            query = "SELECT * FROM hoteis \
-            WHERE (estrelas >= ? and estrelas <= ?) \
-            and (diaria >= ? and diaria <= ?) \
-            and cidade = ? LIMIT ? OFFSET ?"
             tupla = tuple([params[key] for key in params])
-            result = cursor.execute(query, tupla)
+            result = cursor.execute(query_with_city, tupla)
 
         hoteis = []
 
@@ -66,7 +39,8 @@ class Hoteis(Resource):
                 'nome': index[1],
                 'estrelas': index[2],
                 'diaria': index[3],
-                'cidade': index[4]
+                'cidade': index[4],
+                'site_id': index[5]
             })
         return hoteis
 
@@ -77,6 +51,7 @@ class Hotel(Resource):
     args.add_argument('estrelas', type=float, required=True, help="The field 'estrelas' cannot be left blank")
     args.add_argument('diaria', type=float, required=True, help="The field 'diaria' cannot be left blank")
     args.add_argument('cidade', type=str, required=True, help="The field 'cidade' cannot be left blank")
+    args.add_argument('site_id', type=int, required=True, help="Every hotel need to be linked with a site")
 
     def get(self, hotel_id):
         hotel = HotelModel.findHotel(hotel_id)
@@ -91,6 +66,10 @@ class Hotel(Resource):
 
         dados = Hotel.args.parse_args()
         hotelModel = HotelModel(hotel_id, **dados)
+
+        if not SiteModel.find_by_id(dados.get('site_id')):
+            return {"message": "The hotel must be associated to a valid site id".format(hotel_id)}, 400
+
 
         try:
             hotelModel.save_hotel()
