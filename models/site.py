@@ -7,7 +7,7 @@ class SiteModel(db.Model):
     url = db.Column(db.String(80))
     hoteis = db.relationship('HotelModel')
 
-    def __init__(self,url):
+    def __init__(self, url):
         self.url = url
 
     def json(self):
