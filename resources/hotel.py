@@ -70,6 +70,7 @@ class Hotel(Resource):
         if not SiteModel.find_by_id(dados.get('site_id')):
             return {"message": "The hotel must be associated to a valid site id".format(hotel_id)}, 400
 
+
         try:
             hotelModel.save_hotel()
             return hotelModel.json(), 201
