@@ -6,12 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
-<<<<<<< HEAD
-
 .DS_Store
 
-=======
->>>>>>> feature/filter-hoteis
+feature/filter-hoteis
 # Distribution / packaging
 .Python
 build/
